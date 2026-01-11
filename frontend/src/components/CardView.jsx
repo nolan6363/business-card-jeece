@@ -18,11 +18,9 @@ export default function CardView() {
     try {
       const response = await getCard(id);
       setCard(response.data);
-
-      // Record scan
       await recordScan(id);
     } catch (err) {
-      setError(err.response?.data?.error || 'Card not found');
+      setError(err.response?.data?.error || 'Carte non trouvée');
     } finally {
       setLoading(false);
     }
@@ -40,93 +38,78 @@ export default function CardView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-        <div className="text-xl text-white">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-gray-600">Chargement...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-        <div className="bg-white p-8 rounded-lg shadow-2xl text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-700">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-white p-4">
+        <div className="text-center">
+          <p className="text-gray-900 text-lg mb-2">Erreur</p>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-md">
         {card.photo_path && (
-          <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+          <div className="mb-12">
             <img
               src={`${API_URL}/api/photos/${card.photo_path}`}
               alt={`${card.first_name} ${card.last_name}`}
-              className="w-full h-full object-cover"
+              className="w-32 h-32 mx-auto object-cover"
             />
           </div>
         )}
 
-        <div className="p-8">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {card.first_name} {card.last_name}
-            </h1>
-            <p className="text-xl text-gray-600 mb-1">{card.position}</p>
-            <p className="text-lg text-gray-500">{card.company}</p>
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-light text-gray-900 mb-4">
+            {card.first_name} {card.last_name}
+          </h1>
+          <p className="text-lg text-primary-600 mb-2">{card.position}</p>
+          <p className="text-gray-600">{card.company}</p>
+        </div>
+
+        <div className="space-y-6 mb-12">
+          <div className="border-b border-gray-200 pb-4">
+            <p className="text-sm text-gray-500 mb-1">Email</p>
+            <a href={`mailto:${card.email}`} className="text-gray-900">
+              {card.email}
+            </a>
           </div>
 
-          <div className="space-y-3 mb-8">
-            <div className="flex items-center space-x-3 text-gray-700">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <a href={`mailto:${card.email}`} className="hover:text-blue-600">
-                {card.email}
+          {card.website && (
+            <div className="border-b border-gray-200 pb-4">
+              <p className="text-sm text-gray-500 mb-1">Site Web</p>
+              <a href={card.website} target="_blank" rel="noopener noreferrer" className="text-gray-900">
+                {card.website.replace(/^https?:\/\//, '')}
               </a>
             </div>
+          )}
+        </div>
 
-            {card.website && (
-              <div className="flex items-center space-x-3 text-gray-700">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-                <a href={card.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 truncate">
-                  {card.website}
-                </a>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-3">
-            {card.website && (
-              <button
-                onClick={handleVisitWebsite}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 font-medium transition-colors"
-              >
-                Visit Website
-              </button>
-            )}
-
+        <div className="space-y-4">
+          {card.website && (
             <button
-              onClick={handleDownloadVCard}
-              className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center justify-center space-x-2"
+              onClick={handleVisitWebsite}
+              className="w-full py-4 text-center border border-gray-300 text-gray-900 hover:border-gray-400 transition-colors font-medium"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Add to Contacts</span>
+              Visiter le Site Web
             </button>
-          </div>
+          )}
 
-          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-            <p className="text-sm text-gray-500">
-              Digital Business Card
-            </p>
-          </div>
+          <button
+            onClick={handleDownloadVCard}
+            className="w-full py-4 text-center bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
+          >
+            Ajouter aux Contacts
+          </button>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [showForm, setShowForm] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [activeTab, setActiveTab] = useState('cards'); // 'cards' or 'stats'
+  const [activeTab, setActiveTab] = useState('cards');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function Dashboard() {
         localStorage.removeItem('token');
         navigate('/login');
       } else {
-        showNotification('Failed to load cards', 'error');
+        showNotification('Échec du chargement des cartes', 'error');
       }
     } finally {
       setLoading(false);
@@ -50,16 +50,16 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (cardId) => {
-    if (!window.confirm('Are you sure you want to delete this card?')) {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
       return;
     }
 
     try {
       await deleteCard(cardId);
-      showNotification('Card deleted successfully', 'success');
+      showNotification('Carte supprimée', 'success');
       loadCards();
     } catch (err) {
-      showNotification('Failed to delete card', 'error');
+      showNotification('Échec de la suppression', 'error');
     }
   };
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
   };
 
   const handleCopyLink = (cardId) => {
-    showNotification('Link copied to clipboard!', 'success');
+    showNotification('Lien copié', 'success');
   };
 
   const showNotification = (message, type) => {
@@ -82,80 +82,87 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Business Cards Dashboard
-            </h1>
+            <div>
+              <h1 className="text-2xl font-light text-gray-900">Tableau de Bord</h1>
+              <p className="text-sm text-gray-500 mt-1">Gestion des cartes de visite</p>
+            </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              className="px-6 py-2 text-sm text-gray-700 border border-gray-300 hover:border-gray-400 transition-colors"
             >
-              Logout
+              Déconnexion
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         {notification && (
-          <div className={`mb-4 p-4 rounded ${
+          <div className={`mb-6 border-l-4 p-4 ${
             notification.type === 'success'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
+              ? 'border-primary-500 bg-primary-50 text-primary-800'
+              : 'border-red-500 bg-red-50 text-red-800'
           }`}>
             {notification.message}
           </div>
         )}
 
-        <div className="mb-6 flex space-x-4">
-          <button
-            onClick={() => setActiveTab('cards')}
-            className={`px-6 py-2 rounded-lg font-medium ${
-              activeTab === 'cards'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Cards
-          </button>
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`px-6 py-2 rounded-lg font-medium ${
-              activeTab === 'stats'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Statistics
-          </button>
+        <div className="mb-8 border-b border-gray-200">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('cards')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'cards'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Cartes ({cards.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('stats')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'stats'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Statistiques
+            </button>
+          </nav>
         </div>
 
         {activeTab === 'cards' ? (
           <>
-            <div className="mb-6">
+            <div className="mb-8">
               <button
                 onClick={handleNewCard}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                className="px-6 py-3 bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
               >
-                + New Business Card
+                Nouvelle Carte
               </button>
             </div>
 
             {cards.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-gray-600 text-lg">
-                  No business cards yet. Create your first one!
-                </p>
+              <div className="bg-white border border-gray-200 p-16 text-center">
+                <p className="text-gray-600 mb-6">Aucune carte de visite</p>
+                <button
+                  onClick={handleNewCard}
+                  className="px-6 py-3 bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
+                >
+                  Créer une Carte
+                </button>
               </div>
             ) : (
               <CardList

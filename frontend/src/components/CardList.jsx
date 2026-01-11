@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export default function CardList({ cards, onEdit, onDelete, onCopyLink }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -12,76 +10,68 @@ export default function CardList({ cards, onEdit, onDelete, onCopyLink }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {cards.map((card) => (
-        <div key={card.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div key={card.id} className="bg-white border border-gray-200">
           <div className="p-6">
-            <div className="flex items-center space-x-4 mb-4">
+            <div className="flex items-start space-x-4 mb-6">
               {card.photo_path ? (
                 <img
                   src={`${API_URL}/api/photos/${card.photo_path}`}
                   alt={`${card.first_name} ${card.last_name}`}
-                  className="w-20 h-20 rounded-full object-cover"
+                  className="w-16 h-16 object-cover"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-gray-600">
+                <div className="w-16 h-16 bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
                   {card.first_name[0]}{card.last_name[0]}
                 </div>
               )}
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-gray-800">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-medium text-gray-900 truncate">
                   {card.first_name} {card.last_name}
                 </h3>
-                <p className="text-sm text-gray-600">{card.position}</p>
-                <p className="text-sm text-gray-500">{card.company}</p>
+                <p className="text-sm text-gray-600 truncate">{card.position}</p>
+                <p className="text-sm text-gray-500 truncate">{card.company}</p>
               </div>
             </div>
 
-            <div className="space-y-2 mb-4">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Email:</span> {card.email}
-              </p>
+            <div className="space-y-2 mb-6 pb-6 border-b border-gray-200">
+              <p className="text-sm text-gray-600 truncate">{card.email}</p>
               {card.website && (
-                <p className="text-sm text-gray-600 truncate">
-                  <span className="font-medium">Website:</span> {card.website}
-                </p>
+                <p className="text-sm text-gray-500 truncate">{card.website}</p>
               )}
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Scans:</span> {card.scan_count}
-                </p>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  card.is_active
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-sm text-gray-600">{card.scan_count} scans</span>
+                <span className={`text-xs font-medium ${
+                  card.is_active ? 'text-primary-600' : 'text-gray-400'
                 }`}>
-                  {card.is_active ? 'Active' : 'Inactive'}
+                  {card.is_active ? 'Actif' : 'Inactif'}
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => window.open(`/card/${card.id}`, '_blank')}
-                className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                className="px-4 py-2 text-sm border border-gray-300 text-gray-700 hover:border-gray-400 transition-colors"
               >
-                View
+                Voir
               </button>
               <button
                 onClick={() => copyToClipboard(card.id)}
-                className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                className="px-4 py-2 text-sm bg-primary-500 text-white hover:bg-primary-600 transition-colors"
               >
-                Copy Link
+                Copier
               </button>
               <button
                 onClick={() => onEdit(card)}
-                className="px-3 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-sm"
+                className="px-4 py-2 text-sm border border-gray-300 text-gray-700 hover:border-gray-400 transition-colors"
               >
-                Edit
+                Modifier
               </button>
               <button
                 onClick={() => onDelete(card.id)}
-                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                className="px-4 py-2 text-sm border border-red-300 text-red-600 hover:border-red-400 transition-colors"
               >
-                Delete
+                Supprimer
               </button>
             </div>
           </div>
