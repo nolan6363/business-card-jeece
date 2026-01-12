@@ -32,10 +32,26 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     volumes:
       - ./backend/uploads:/app/uploads
+    # Ports exposés localement (commentez en production avec Traefik)
     ports:
       - "5555:5000"
     networks:
       - app_network
+      - dokploy-network
+    labels:
+      # Active l'exposition à Traefik
+      - "traefik.enable=true"
+      # Réseau utilisé par Traefik
+      - "traefik.docker.network=dokploy-network"
+      # Domaine API (à personnaliser dans .env)
+      - "traefik.http.routers.business-cards-api.rule=Host(`${API_DOMAIN:-api.business-cards.example.com}`)"
+      # Entrypoint HTTPS
+      - "traefik.http.routers.business-cards-api.entrypoints=websecure"
+      # Port interne du backend Flask
+      - "traefik.http.services.business-cards-api.loadbalancer.server.port=5000"
+      # Certificat SSL (Let's Encrypt)
+      - "traefik.http.routers.business-cards-api.tls=true"
+      - "traefik.http.routers.business-cards-api.tls.certresolver=letsencrypt"
 
   frontend:
     build:
@@ -46,10 +62,26 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    # Ports exposés localement (commentez en production avec Traefik)
     ports:
       - "3333:80"
     networks:
       - app_network
+      - dokploy-network
+    labels:
+      # Active l'exposition à Traefik
+      - "traefik.enable=true"
+      # Réseau utilisé par Traefik
+      - "traefik.docker.network=dokploy-network"
+      # Domaine principal (à personnaliser dans .env)
+      - "traefik.http.routers.business-cards.rule=Host(`${DOMAIN:-business-cards.example.com}`)"
+      # Entrypoint HTTPS
+      - "traefik.http.routers.business-cards.entrypoints=websecure"
+      # Port interne du frontend Nginx
+      - "traefik.http.services.business-cards.loadbalancer.server.port=80"
+      # Certificat SSL (Let's Encrypt)
+      - "traefik.http.routers.business-cards.tls=true"
+      - "traefik.http.routers.business-cards.tls.certresolver=letsencrypt"
 
 volumes:
   postgres_data:
@@ -57,3 +89,5 @@ volumes:
 networks:
   app_network:
     driver: bridge
+  dokploy-network:
+    external: true
