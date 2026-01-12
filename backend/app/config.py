@@ -1,10 +1,20 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Get the base directory (backend folder)
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+# Get the project root directory (parent of backend)
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+
+# Only load .env if it exists (local dev)
+# In Docker, variables come from docker-compose.yml
+# Check both current directory and parent directory for .env file
+env_path = os.path.join(PROJECT_ROOT, '.env')
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+elif os.path.exists('.env'):
+    load_dotenv()
 
 class Config:
     # Database

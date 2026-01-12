@@ -43,3 +43,4 @@ postgres_data/
 
 # Docker
 *.log
+docker-compose.override.yml

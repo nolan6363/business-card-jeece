@@ -47,7 +47,7 @@ services:
       context: ./frontend
       args:
         # L'URL utilisée par le navigateur client (PC/Mobile)
-        VITE_API_URL: https://api.card.jeece.fr
+        VITE_API_URL: ${VITE_API_URL:-https://api.card.jeece.fr}
     container_name: business_cards_frontend
     restart: unless-stopped
     depends_on:
@@ -71,3 +71,6 @@ volumes:
 networks:
   dokploy-network:
     external: true
+    name: dokploy-network
+  default:
+    driver: bridge
