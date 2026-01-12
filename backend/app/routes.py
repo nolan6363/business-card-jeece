@@ -13,6 +13,15 @@ from collections import defaultdict
 
 api_bp = Blueprint('api', __name__)
 
+@api_bp.route("/", defaults={"path": ""}, methods=["OPTIONS"])
+@api_bp.route("/<path:path>", methods=["OPTIONS"])
+def cors_preflight(path):
+    """
+    Répond aux requêtes CORS préflight (OPTIONS) pour n'importe quel endpoint /api/*
+    afin d'éviter les 404/405 qui cassent le CORS côté navigateur.
+    """
+    return ("", 204)
+
 def token_required(f):
     """Decorator to protect routes with JWT token"""
     @wraps(f)
