@@ -41,6 +41,17 @@ services:
       - "traefik.http.routers.cards_api.entrypoints=websecure"
       - "traefik.http.routers.cards_api.tls=true"
       - "traefik.http.services.cards_api.loadbalancer.server.port=5000"
+      
+      # 1. GENERATION DU CERTIFICAT (Remplace 'letsencrypt' par le nom de ton resolver Traefik)
+      - "traefik.http.routers.cards_api.tls.certresolver=letsencrypt"
+
+      # 2. CONFIGURATION DU CORS (Autorise le front à parler au back)
+      - "traefik.http.middlewares.cards-cors.headers.accesscontrolallowmethods=GET,OPTIONS,POST,PUT,DELETE"
+      - "traefik.http.middlewares.cards-cors.headers.accesscontrolalloworiginlist=https://card.jeece.fr"
+      - "traefik.http.middlewares.cards-cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
+      - "traefik.http.routers.cards_api.middlewares=cards-cors"
+      
+      - "traefik.http.services.cards_api.loadbalancer.server.port=5000"
 
   frontend:
     build:
