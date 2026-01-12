@@ -11,7 +11,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./backups:/backups
     networks:
-      - dockploy-network
+      - dokploy-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d business_cards"]
       interval: 10s
@@ -33,10 +33,10 @@ services:
       - ./backend/uploads:/app/uploads
     # Pas de ports exposés directement pour garder l'API privée
     networks:
-      - dockploy-network
+      - dokploy-network
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=dockploy-network"
+      - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.cards_api.rule=Host(`api.card.jeece.fr`)"
       - "traefik.http.routers.cards_api.entrypoints=websecure"
       - "traefik.http.routers.cards_api.tls=true"
@@ -55,10 +55,10 @@ services:
     ports:
       - "3333:80"
     networks:
-      - dockploy-network
+      - dokploy-network
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=dockploy-network"
+      - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.cards_front.rule=Host(`card.jeece.fr`)"
       - "traefik.http.routers.cards_front.entrypoints=websecure"
       - "traefik.http.routers.cards_front.tls=true"
@@ -69,5 +69,5 @@ volumes:
   postgres_data:
 
 networks:
-  dockploy-network:
+  dokploy-network:
     external: true
