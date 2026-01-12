@@ -28,39 +28,35 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:${DB_PASSWORD}@postgres:5432/business_cards
       SECRET_KEY: ${SECRET_KEY}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-    volumes:
-      - ./backend/uploads:/app/uploads
-    ports:
-      - "5555:5000"
+    # On supprime "ports" car on ne veut pas d'accès direct par l'IP du serveur
     networks:
       - dockploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dockploy-network"
+      # On crée une route interne via Traefik
+      - "traefik.http.routers.bc_api.rule=Host(`api.card.jeece.fr`)"
+      - "traefik.http.routers.bc_api.entrypoints=websecure"
+      - "traefik.http.routers.bc_api.tls=true"
+      - "traefik.http.services.bc_api.loadbalancer.server.port=5000"
 
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: ${VITE_API_URL:-https:card.jeece.fr}
+        # C'est cette URL que le navigateur utilisera
+        VITE_API_URL: https://api.card.jeece.fr
     container_name: business_cards_frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    ports:
-      - "3333:80"
-    networks:
-      - dockploy-network
+    # ... reste de la config ...
     labels:
-      # Active l'exposition à Traefik
       - "traefik.enable=true"
-      # Réseau utilisé par Traefik
       - "traefik.docker.network=dockploy-network"
-      # Domaine qui pointera sur Drizzle Gateway
       - "traefik.http.routers.drizzle.rule=Host(`card.jeece.fr`)"
-      # Entrypoint HTTPS
       - "traefik.http.routers.drizzle.entrypoints=websecure"
-      # Port interne exposé par Drizzle Gateway
-      - "traefik.http.services.drizzle.loadbalancer.server.port=3333"
-
+      - "traefik.http.routers.drizzle.tls=true"
+      # CORRECTION PORT INTERNE (80 car c'est le port par défaut de Nginx dans le conteneur)
+      - "traefik.http.services.drizzle.loadbalancer.server.port=80"
+      
 volumes:
   postgres_data:
 
