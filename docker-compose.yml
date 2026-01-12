@@ -48,12 +48,12 @@ services:
     ports:
       - "3333:80"
     networks:
-      - dokploy-network
+      - dockploy-network
     labels:
       # Active l'exposition à Traefik
       - "traefik.enable=true"
       # Réseau utilisé par Traefik
-      - "traefik.docker.network=dokploy-network"
+      - "traefik.docker.network=dockploy-network"
       # Domaine qui pointera sur Drizzle Gateway
       - "traefik.http.routers.drizzle.rule=Host(`card.jeece.fr`)"
       # Entrypoint HTTPS
