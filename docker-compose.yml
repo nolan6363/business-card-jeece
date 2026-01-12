@@ -28,35 +28,43 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:${DB_PASSWORD}@postgres:5432/business_cards
       SECRET_KEY: ${SECRET_KEY}
-    # On supprime "ports" car on ne veut pas d'accès direct par l'IP du serveur
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ./backend/uploads:/app/uploads
+    # Pas de ports exposés directement pour garder l'API privée
     networks:
       - dockploy-network
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dockploy-network"
-      # On crée une route interne via Traefik
-      - "traefik.http.routers.bc_api.rule=Host(`api.card.jeece.fr`)"
-      - "traefik.http.routers.bc_api.entrypoints=websecure"
-      - "traefik.http.routers.bc_api.tls=true"
-      - "traefik.http.services.bc_api.loadbalancer.server.port=5000"
+      - "traefik.http.routers.cards_api.rule=Host(`api.card.jeece.fr`)"
+      - "traefik.http.routers.cards_api.entrypoints=websecure"
+      - "traefik.http.routers.cards_api.tls=true"
+      - "traefik.http.services.cards_api.loadbalancer.server.port=5000"
 
   frontend:
     build:
       context: ./frontend
       args:
-        # C'est cette URL que le navigateur utilisera
+        # L'URL utilisée par le navigateur client (PC/Mobile)
         VITE_API_URL: https://api.card.jeece.fr
     container_name: business_cards_frontend
-    # ... reste de la config ...
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3333:80"
+    networks:
+      - dockploy-network
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dockploy-network"
-      - "traefik.http.routers.drizzle.rule=Host(`card.jeece.fr`)"
-      - "traefik.http.routers.drizzle.entrypoints=websecure"
-      - "traefik.http.routers.drizzle.tls=true"
-      # CORRECTION PORT INTERNE (80 car c'est le port par défaut de Nginx dans le conteneur)
-      - "traefik.http.services.drizzle.loadbalancer.server.port=80"
-      
+      - "traefik.http.routers.cards_front.rule=Host(`card.jeece.fr`)"
+      - "traefik.http.routers.cards_front.entrypoints=websecure"
+      - "traefik.http.routers.cards_front.tls=true"
+      # Traefik envoie les requêtes sur le port 80 à l'intérieur du conteneur
+      - "traefik.http.services.cards_front.loadbalancer.server.port=80"
+
 volumes:
   postgres_data:
 
