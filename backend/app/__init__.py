@@ -14,15 +14,7 @@ def create_app():
     db.init_app(app)
 
     # Configure CORS properly for cross-origin requests
-    CORS(app,
-         resources={r"/api/*": {
-             "origins": ["https://card.jeece.fr", "http://localhost:3000", "http://localhost:5173"],
-             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-             "allow_headers": ["Content-Type", "Authorization"],
-             "expose_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": False,
-             "max_age": 3600
-         }})
+    CORS(app, origins='*')
 
     # Create uploads folder if it doesn't exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
