@@ -65,5 +65,5 @@ volumes:
   postgres_data:
 
 networks:
-  app_network:
+  dockploy-network:
     driver: bridge
