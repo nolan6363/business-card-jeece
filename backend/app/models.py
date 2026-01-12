@@ -9,6 +9,7 @@ class Card(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(50), nullable=True)
     company = db.Column(db.String(255), nullable=False)
     position = db.Column(db.String(255), nullable=False)
     website = db.Column(db.String(500), nullable=True)
@@ -25,6 +26,7 @@ class Card(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
+            'phone': self.phone,
             'company': self.company,
             'position': self.position,
             'website': self.website,

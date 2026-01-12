@@ -6,6 +6,7 @@ export default function CardForm({ card, onClose, onSuccess, onError }) {
     first_name: '',
     last_name: '',
     email: '',
+    phone: '',
     company: '',
     position: '',
     website: '',
@@ -23,6 +24,7 @@ export default function CardForm({ card, onClose, onSuccess, onError }) {
         first_name: card.first_name,
         last_name: card.last_name,
         email: card.email,
+        phone: card.phone || '',
         company: card.company,
         position: card.position,
         website: card.website || '',
@@ -157,6 +159,20 @@ export default function CardForm({ card, onClose, onSuccess, onError }) {
               onChange={handleChange}
               required
               className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-primary-500 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Téléphone
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-primary-500 transition-colors"
+              placeholder="+33 6 12 34 56 78"
             />
           </div>
 

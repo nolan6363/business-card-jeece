@@ -79,6 +79,7 @@ def create_card():
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
+    phone = request.form.get('phone', '')
     company = request.form.get('company')
     position = request.form.get('position')
     website = request.form.get('website', '')
@@ -93,6 +94,7 @@ def create_card():
         first_name=first_name,
         last_name=last_name,
         email=email,
+        phone=phone,
         company=company,
         position=position,
         website=website,
@@ -131,6 +133,7 @@ def update_card(card_id):
     card.first_name = request.form.get('first_name', card.first_name)
     card.last_name = request.form.get('last_name', card.last_name)
     card.email = request.form.get('email', card.email)
+    card.phone = request.form.get('phone', card.phone)
     card.company = request.form.get('company', card.company)
     card.position = request.form.get('position', card.position)
     card.website = request.form.get('website', card.website)
@@ -247,10 +250,23 @@ def download_vcard(card_id):
 @api_bp.route('/photos/<filename>', methods=['GET'])
 def get_photo(filename):
     """Serve uploaded photos"""
-    return send_file(
-        os.path.join(current_app.config['UPLOAD_FOLDER'], filename),
-        mimetype='image/jpeg'
-    )
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
+    # Check if file exists
+    if not os.path.exists(filepath):
+        return jsonify({'error': 'Photo not found'}), 404
+
+    # Detect mimetype based on extension
+    ext = filename.rsplit('.', 1)[-1].lower()
+    mimetype_map = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'webp': 'image/webp'
+    }
+    mimetype = mimetype_map.get(ext, 'image/jpeg')
+
+    return send_file(filepath, mimetype=mimetype)
 
 @api_bp.route('/stats', methods=['GET'])
 @token_required

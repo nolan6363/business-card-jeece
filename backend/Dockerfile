@@ -22,5 +22,8 @@ RUN mkdir -p uploads
 # Expose port
 EXPOSE 5000
 
-# Run with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--worker-class", "gevent", "--timeout", "120", "run:app"]
+# Run with gunicorn (optimized for minimal memory usage)
+# --workers 1: Single worker for low traffic apps (<100 requests/day)
+# --worker-class gevent: Async worker for efficient I/O (handles multiple connections with 1 worker)
+# --max-requests 1000: Recycle worker periodically to prevent memory leaks
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--worker-class", "gevent", "--max-requests", "1000", "--max-requests-jitter", "100", "--timeout", "120", "run:app"]

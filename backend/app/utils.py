@@ -78,6 +78,10 @@ def generate_vcard(card, photo_url=None):
         f"TITLE:{card.position}"
     ]
 
+    # Add phone if present
+    if card.phone:
+        vcard_lines.append(f"TEL:{card.phone}")
+
     # Add website if present
     if card.website:
         vcard_lines.append(f"URL:{card.website}")

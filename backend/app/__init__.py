@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -12,6 +13,9 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     CORS(app, origins='*')
+
+    # Create uploads folder if it doesn't exist
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # Register routes
     from app.routes import api_bp
