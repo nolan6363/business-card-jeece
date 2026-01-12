@@ -33,7 +33,7 @@ services:
     volumes:
       - ./backend/uploads:/app/uploads
     ports:
-      - "5000:5000"
+      - "5555:5000"
     networks:
       - app_network
 
@@ -47,7 +47,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:80"
+      - "3333:80"
     networks:
       - app_network
 
